@@ -10,9 +10,9 @@ def register():
 
 
 def application(file_name: str()):
-    if file_name == "log_in.py":
+    if file_name == "/log_in.py":
         return log_in()
-    elif file_name == "register.py":
+    elif file_name == "/register.py":
         return register()
     else:
         return "%s" % time.ctime()

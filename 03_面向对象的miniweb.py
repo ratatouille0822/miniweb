@@ -3,6 +3,7 @@ import multiprocessing
 import re
 import mini_frame
 
+
 class WSGIServer(object):
     def __init__(self):
         # 1. 创建套接字
@@ -74,8 +75,6 @@ class WSGIServer(object):
             p = multiprocessing.Process(target=self.service_client, args=(new_socket,))
             p.start()
             new_socket.close()
-
-
 
 
 def main():
