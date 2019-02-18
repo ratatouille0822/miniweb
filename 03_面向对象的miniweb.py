@@ -37,23 +37,31 @@ class WSGIServer(object):
                 file_name = "/index.html"
 
         # 2. 返回HTTP格式的数据
-
-        try:
-            file_to_open = "./html" + file_name
-            print(file_to_open)
-            f = open(file_to_open, "rb")
-        except:
-            response = "HTTP/1.1 404 NOT FOUND \r\n"
-            response += "\r\n"
-            response += "-----------file not found---------- "
-            new_socket.send(response.encode("utf-8"))
+        if not file_name.endswith(".py"):
+            try:
+                file_to_open = "./html" + file_name
+                print(file_to_open)
+                f = open(file_to_open, "rb")
+            except:
+                response = "HTTP/1.1 404 NOT FOUND \r\n"
+                response += "\r\n"
+                response += "-----------file not found---------- "
+                new_socket.send(response.encode("utf-8"))
+            else:
+                html_content = f.read()
+                f.close()
+                response = "HTTP/1.1 200 OK\r\n"
+                response += "\r\n"
+                new_socket.send(response.encode("utf-8"))
+                new_socket.send(html_content)
         else:
-            html_content = f.read()
-            f.close()
-            response = "HTTP/1.1 200 OK\r\n"
-            response += "\r\n"
+            header = "HTTP/1.1 200 OK \r\n"
+            header += "\r\n"
+
+            body = "hahahahah"
+            response = header + body
+
             new_socket.send(response.encode("utf-8"))
-            new_socket.send(html_content)
 
         new_socket.close()
 
