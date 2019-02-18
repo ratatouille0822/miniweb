@@ -4,7 +4,7 @@ import re
 
 
 def service_client():
-    
+    pass
 
 def main():
     # 1. 创建套接字

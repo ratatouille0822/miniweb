@@ -1,7 +1,7 @@
 import socket
 import multiprocessing
 import re
-
+import mini_frame
 
 class WSGIServer(object):
     def __init__(self):
@@ -58,7 +58,7 @@ class WSGIServer(object):
             header = "HTTP/1.1 200 OK \r\n"
             header += "\r\n"
 
-            body = "hahahahah"
+            body = mini_frame.application(file_name)
             response = header + body
 
             new_socket.send(response.encode("utf-8"))
