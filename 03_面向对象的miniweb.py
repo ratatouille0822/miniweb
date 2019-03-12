@@ -13,9 +13,10 @@ class WSGIServer(object):
         self.tcp_socket_server.bind(("", 7890))
         # 3. 将套接字设置为监听
         self.tcp_socket_server.listen(128)
+        self.headers: list()
+        self.status: str()
 
-    @staticmethod
-    def service_client(new_socket: socket.socket):
+    def service_client(self, new_socket: socket.socket):
         # 为这个客户端返回数据
         # 1. 响应浏览器发送过来的HTTP请求
         request = new_socket.recv(1024)
@@ -24,9 +25,8 @@ class WSGIServer(object):
         print("")
         print(">" * 20)
         print(request_lines)
-
         file_name = str()
-        ret = re.match(r"[^/]+(/[^ ]*)", request_lines[0].decode("utf-8"))
+        ret = re.match(r"[^/]+(/[^ ]*)", request_lines[0].decode("gbk"))
         print(ret)
         if ret:
             print(ret)
@@ -36,7 +36,6 @@ class WSGIServer(object):
             print("------------------------------------------------------------------------------")
             if file_name == "/":
                 file_name = "/index.html"
-
         # 2. 返回HTTP格式的数据
         if not file_name.endswith(".py"):
             try:
@@ -47,24 +46,29 @@ class WSGIServer(object):
                 response = "HTTP/1.1 404 NOT FOUND \r\n"
                 response += "\r\n"
                 response += "-----------file not found---------- "
-                new_socket.send(response.encode("utf-8"))
+                new_socket.send(response.encode("gbk"))
             else:
                 html_content = f.read()
                 f.close()
                 response = "HTTP/1.1 200 OK\r\n"
                 response += "\r\n"
-                new_socket.send(response.encode("utf-8"))
+                new_socket.send(response.encode("gbk"))
                 new_socket.send(html_content)
         else:
-            header = "HTTP/1.1 200 OK \r\n"
+            header = "HTTP/1.1 "
+            header += self.status
             header += "\r\n"
 
-            body = mini_frame.application(file_name)
+            print(header)
+            body = mini_frame.application({"test": "empty"}, self.set_start_response)
             response = header + body
 
-            new_socket.send(response.encode("utf-8"))
-
+            new_socket.send(response.encode("gbk"))
         new_socket.close()
+
+    def set_start_response(self, status, headers):
+        self.status = status
+        self.headers = headers
 
     def run(self):
         # 4. 创建一个进程，为这个客服服务
