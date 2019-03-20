@@ -13,9 +13,13 @@ class WSGIServer(object):
         self.new_socket.bind(("", 7890))
         # 2. 设置监听
         self.new_socket.listen(1024)
+        self.header = str()
+        self.body = str()
+        self.env = {}
+        self.item_name = list()
+        self.item_content = list()
 
-    @staticmethod
-    def start_svr(new_socket: socket.socket):
+    def start_svr(self, new_socket: socket.socket):
         request = new_socket.recv(1024)
         print(request)
         request_line = request.splitlines()
@@ -50,12 +54,22 @@ class WSGIServer(object):
                 new_socket.send(content)
         else:
             # 动态资源请求：
-            header = "HTTP/1.1 200 OK \r\n"
-            header += "\r\n"
+            # header = "HTTP/1.1 200 OK \r\n"
+            # header += "\r\n"
 
-            body = mini_frame.application(file_request)
-            response = header + body
+            body = mini_frame.application(file_request, self.env, self.set_response_header)
+            print(">" * 100)
+            print(self.header)
+            print(">" * 100)
+            response = self.header + body
             new_socket.send(response.encode("gbk"))
+
+    def set_response_header(self, http_status: str(), info):
+        self.header = "HTTP/1.1 "
+        self.header += http_status
+        for temp in info:
+            self.header += "%s:%s\r\n" % (temp[0], temp[1])
+        self.header += "\r\n"
 
     def run(self):
         while True:
