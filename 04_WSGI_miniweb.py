@@ -15,7 +15,7 @@ class WSGIServer(object):
         self.new_socket.listen(1024)
         self.header = str()
         self.body = str()
-        self.env = {}
+        self.env = dict()
         self.item_name = list()
         self.item_content = list()
 
@@ -56,8 +56,8 @@ class WSGIServer(object):
             # 动态资源请求：
             # header = "HTTP/1.1 200 OK \r\n"
             # header += "\r\n"
-
-            body = mini_frame.application(file_request, self.env, self.set_response_header)
+            self.env["FILE_PATH"] = file_request
+            body = mini_frame.application(self.env, self.set_response_header)
             print(">" * 100)
             print(self.header)
             print(">" * 100)

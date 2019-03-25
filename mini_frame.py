@@ -13,14 +13,14 @@ def profile():
     return "Here is profile() time is %s" % time.ctime()
 
 
-def application(file_name: str(), env: {}, set_response_hesder):
-    if file_name == "/log_in.py":
+def application(env: dict(), set_response_hesder):
+    if env.Filepath == "/log_in.py":
         set_response_hesder("200 OK \r\n", [("Content-Type", "text/html;charset=utf-8"), ])
         return log_in()
-    elif file_name == "/register.py":
+    elif env.Filepath == "/register.py":
         set_response_hesder("200 OK \r\n", [("Content-Type", "text/html;charset=utf-8"), ])
         return register()
-    elif file_name == "/profile.py":
+    elif env.Filepath == "/profile.py":
         set_response_hesder("200 OK \r\n", [("Content-Type", "text/html;charset=utf-8"), ])
         return profile()
     else:
