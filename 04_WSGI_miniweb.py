@@ -2,6 +2,7 @@ import multiprocessing
 import mini_frame
 import re
 import socket
+import sys
 
 
 class WSGIServer(object):
@@ -10,7 +11,9 @@ class WSGIServer(object):
         self.new_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.new_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         # 1. 绑定端口
-        self.new_socket.bind(("", 7890))
+        port = sys.argv[1]
+        print("Current port binding is %s" % port)
+        self.new_socket.bind(("", int(port)))
         # 2. 设置监听
         self.new_socket.listen(1024)
         self.header = str()
@@ -57,7 +60,9 @@ class WSGIServer(object):
             # header = "HTTP/1.1 200 OK \r\n"
             # header += "\r\n"
             self.env["FILE_PATH"] = file_request
+            print(self.env["FILE_PATH"])
             body = mini_frame.application(self.env, self.set_response_header)
+
             print(">" * 100)
             print(self.header)
             print(">" * 100)

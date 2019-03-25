@@ -14,13 +14,13 @@ def profile():
 
 
 def application(env: dict(), set_response_hesder):
-    if env.Filepath == "/log_in.py":
+    if env["FILE_PATH"] == "/log_in.py":
         set_response_hesder("200 OK \r\n", [("Content-Type", "text/html;charset=utf-8"), ])
         return log_in()
-    elif env.Filepath == "/register.py":
-        set_response_hesder("200 OK \r\n", [("Content-Type", "text/html;charset=utf-8"), ])
+    elif env["FILE_PATH"] == "/register.py":
+        set_response_hesder("200 OK \r\n", [("Content-Type", "text/html;charset=utf-8"), ("server", "My SVR")])
         return register()
-    elif env.Filepath == "/profile.py":
+    elif env["FILE_PATH"] == "/profile.py":
         set_response_hesder("200 OK \r\n", [("Content-Type", "text/html;charset=utf-8"), ])
         return profile()
     else:
