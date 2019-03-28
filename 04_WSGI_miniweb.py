@@ -1,8 +1,7 @@
 import multiprocessing
-import mini_frame
+from dynamic import mini_frame as mini_frame
 import re
 import socket
-import sys
 
 
 class WSGIServer(object):
@@ -11,9 +10,9 @@ class WSGIServer(object):
         self.new_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.new_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         # 1. 绑定端口
-        port = sys.argv[1]
-        print("Current port binding is %s" % port)
-        self.new_socket.bind(("", int(port)))
+        # port = sys.argv[1]
+        # print("Current port binding is %s" % port)
+        self.new_socket.bind(("", 7890), )
         # 2. 设置监听
         self.new_socket.listen(1024)
         self.header = str()
@@ -28,12 +27,14 @@ class WSGIServer(object):
         request_line = request.splitlines()
         print("*" * 200)
         print(request_line)
-        file_name = "./html"
+        file_name = "./templates"
         file_request = re.match(r"[^/]+(/[^ ]*)", request_line[0].decode("gbk")).group(1)
         if file_request == "/":
             file_request = "/index.html"
         print("-" * 200)
         print(file_request)
+        if file_request.endswith(".css") or file_request.endswith(".js"):
+            file_name = "./static"
         file_name += file_request
         print(file_name)
 
@@ -60,21 +61,27 @@ class WSGIServer(object):
             # header = "HTTP/1.1 200 OK \r\n"
             # header += "\r\n"
             self.env["FILE_PATH"] = file_request
-            print(self.env["FILE_PATH"])
+            print(self.env["FILE_PATH"], "-----------------300")
             body = mini_frame.application(self.env, self.set_response_header)
+            print("---------------------debuf here 100 ------------------")
+            print(body)
 
             print(">" * 100)
             print(self.header)
             print(">" * 100)
-            response = self.header + body
-            new_socket.send(response.encode("gbk"))
+            response = self.header
+            print(response)
+            new_socket.send(response.encode("utf-8"))
+
+            print("---------------------debuf here 200 ------------------")
+            print(body)
+            new_socket.send(body)
 
     def set_response_header(self, http_status: str(), info):
         self.header = "HTTP/1.1 "
         self.header += http_status
         for temp in info:
             self.header += "%s:%s\r\n" % (temp[0], temp[1])
-        self.header += "\r\n"
 
     def run(self):
         while True:

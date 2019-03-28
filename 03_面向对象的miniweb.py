@@ -1,7 +1,7 @@
 import socket
 import multiprocessing
 import re
-import mini_frame
+from dynamic import mini_frame
 
 
 class WSGIServer(object):
