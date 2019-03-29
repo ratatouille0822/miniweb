@@ -1,5 +1,5 @@
 import multiprocessing
-from dynamic import mini_frame as mini_frame
+from dynamic import mini_frame
 import re
 import socket
 
@@ -23,16 +23,12 @@ class WSGIServer(object):
 
     def start_svr(self, new_socket: socket.socket):
         request = new_socket.recv(1024)
-        print(request)
         request_line = request.splitlines()
-        print("*" * 200)
         print(request_line)
         file_name = "./templates"
         file_request = re.match(r"[^/]+(/[^ ]*)", request_line[0].decode("gbk")).group(1)
         if file_request == "/":
             file_request = "/index.html"
-        print("-" * 200)
-        print(file_request)
         if file_request.endswith(".css") or file_request.endswith(".js"):
             file_name = "./static"
         file_name += file_request
@@ -61,21 +57,9 @@ class WSGIServer(object):
             # header = "HTTP/1.1 200 OK \r\n"
             # header += "\r\n"
             self.env["FILE_PATH"] = file_request
-            print(self.env["FILE_PATH"], "-----------------300")
             body = mini_frame.application(self.env, self.set_response_header)
-            print("---------------------debuf here 100 ------------------")
-            print(body)
-
-            print(">" * 100)
-            print(self.header)
-            print(">" * 100)
-            response = self.header
-            print(response)
+            response = self.header + "\r\n" + body
             new_socket.send(response.encode("utf-8"))
-
-            print("---------------------debuf here 200 ------------------")
-            print(body)
-            new_socket.send(body)
 
     def set_response_header(self, http_status: str(), info):
         self.header = "HTTP/1.1 "
@@ -86,7 +70,6 @@ class WSGIServer(object):
     def run(self):
         while True:
             new_socket, client_ip_addr = self.new_socket.accept()
-            print(client_ip_addr)
             p = multiprocessing.Process(target=self.start_svr, args=(new_socket,))
             p.start()
             new_socket.close()
