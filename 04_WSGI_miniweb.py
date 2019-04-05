@@ -34,7 +34,7 @@ class WSGIServer(object):
         file_name += file_request
         print(file_name)
 
-        if not file_request.endswith(".py"):
+        if not file_request.endswith(".html"):
             # 如果是静态资源，在此处理：
             try:
                 f = open(file_name, "rb")

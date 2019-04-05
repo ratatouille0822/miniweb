@@ -14,7 +14,7 @@ def route(url):
     return select_func
 
 
-@route("/index.py")
+@route("/index.html")
 def response_index():
     with open("./templates/index.html", "rb") as f:
         content = f.read()
@@ -23,7 +23,7 @@ def response_index():
         return ret
 
 
-@route("/center.py")
+@route("/center.html")
 def response_center():
     with open("./templates/center.html", "rb") as f:
         content = f.read()
@@ -57,6 +57,6 @@ def application(env, set_response_header):
     try:
         set_response_header("200 OK \r\n", [("Content-Type", "text/html;charset=utf-8"), ])
         func = URL_LIST[file_name]
-    except(Exception) :
-        return "Try another url"
+    except(Exception) as ret:
+        return "Try another url, error %s" % str(ret)
     return func()
