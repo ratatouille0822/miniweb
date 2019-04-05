@@ -54,9 +54,9 @@ def application(env, set_response_header):
     # else:
     #     set_response_header("404 NOT FOUND \r\n", [("Content-Type", "text/html;charset=utf-8"), ])
     #     return "%s" % time.ctime()
-    if file_name in URL_LIST:
+    try:
         set_response_header("200 OK \r\n", [("Content-Type", "text/html;charset=utf-8"), ])
         func = URL_LIST[file_name]
-    else:
-        return str(time.time())
+    except(Exception) :
+        return "Try another url"
     return func()
